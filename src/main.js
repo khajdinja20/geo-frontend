@@ -25,6 +25,9 @@ router.beforeEach((to, from, next) => {
 });
 
 const vuetify = createVuetify({
+  theme: {
+    defaultTheme: 'light'
+  },
   components,
   directives,
 })
