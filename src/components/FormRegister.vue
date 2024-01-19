@@ -24,6 +24,8 @@
 <script setup>
 import { useField, useForm } from 'vee-validate'
 import axios from 'axios';
+import Cookies from 'js-cookie'
+import { useRouter } from 'vue-router'
 
 const { handleSubmit, handleReset } = useForm({
     validationSchema: {
@@ -53,6 +55,8 @@ const email = useField('email')
 
 const endpoint = 'signup'
 
+const router = useRouter()
+
 const submitRegister = handleSubmit(async values => {
     console.log(values);
     const sentData = JSON.stringify(values, null, 2)
@@ -71,6 +75,9 @@ const submitRegister = handleSubmit(async values => {
         // Assuming the backend returns a user object on successful login
         const user = response.data;
         console.log(user)
+        if (user.email != undefined)
+            Cookies.set('user', user.email, { expires: 1 })
+        router.push('/home')
         // For example, you can store the user data in the frontend state
         // this.$store.commit("setUser", user);
 
@@ -79,6 +86,7 @@ const submitRegister = handleSubmit(async values => {
     } catch (error) {
         // Handle errors
         console.error("API Error:", error);
+        console.log(error)
 
         // You can display an error message to the user or perform other error handling
         console.log("Login/Register failed. Please check your credentials and try again.");

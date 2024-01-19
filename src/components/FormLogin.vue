@@ -21,6 +21,8 @@
 <script setup>
 import { useField, useForm } from 'vee-validate';
 import axios from 'axios';
+import Cookies from 'js-cookie'
+import { useRouter } from 'vue-router'
 
 
 const { handleSubmit, handleReset } = useForm({
@@ -42,6 +44,8 @@ const email = useField('email')
 const password = useField('password')
 const endpoint = 'login'
 
+const router = useRouter();
+
 const submitLogin = handleSubmit(async values => {
     console.log(values);
     const sentData = JSON.stringify(values, null, 2)
@@ -60,8 +64,9 @@ const submitLogin = handleSubmit(async values => {
         // Assuming the backend returns a user object on successful login
         const user = response.data;
         console.log(user)
-
-
+        if (user.email != undefined)
+            Cookies.set('user', user.email, { expires: 1 })
+        router.push('/home')
         // For example, you can store the user data in the frontend state
         // this.$store.commit("setUser", user);
 
