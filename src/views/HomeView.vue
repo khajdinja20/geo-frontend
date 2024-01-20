@@ -18,9 +18,12 @@
       <v-divider></v-divider>
 
       <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-        <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item>
+        <v-list-item prepend-icon="mdi-controller-classic" title="Games" value="home">
+          <template v-slot:append>
+            <CreateGame></CreateGame>
+            <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
+          </template>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -43,6 +46,7 @@ import LogoutButton from '@/components/LogoutButton.vue'
 import { ref } from 'vue'
 import Cookies from 'js-cookie';
 import LeafletMap from '@/components/LeafletMap.vue';
+import CreateGame from '@/components/CreateGame.vue'
 
 const userMail = Cookies.get('user')
 const userName = userMail ? userMail.split('@')[0] : '';
