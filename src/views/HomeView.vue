@@ -20,7 +20,7 @@
       <v-list density="compact" nav>
         <v-list-item prepend-icon="mdi-controller-classic" title="Games" value="home">
           <template v-slot:append>
-            <CreateGame></CreateGame>
+            <CreateGame @game-created="refreshGameList"></CreateGame>
             <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
           </template>
         </v-list-item>
@@ -126,6 +126,21 @@ onMounted(async () => {
     console.error('Error fetching user games:', error);
   }
 });
+
+const refreshGameList = () => {
+  fetchDataAndUpdateGameList();
+}
+
+const fetchDataAndUpdateGameList = async () => {
+  try {
+    const apiUrl = `http://localhost:4000/api/geotrainer/${endpoint}/${userMail}`;
+    const response = await axios.get(apiUrl);
+    userGames.value = response.data;
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error fetching user games:', error);
+  }
+}
 
 const worstGameIndex = computed(() => {
   if (userGames.value.length === 0) {

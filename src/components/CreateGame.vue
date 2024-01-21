@@ -55,17 +55,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 const dialog = ref(false);
 
 const snackbar = ref(false);
-const text = ref("Game created, refresh page to see new game!");
+const text = ref("Game created!");
 
 import { useField, useForm } from 'vee-validate';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const { handleSubmit } = useForm();
+
+const emit = defineEmits(['game-created'])
 
 const name = useField('name');
 const datePlayed = useField('datePlayed');
@@ -98,6 +100,7 @@ const submitCreateGame = handleSubmit(async (values) => {
         console.log('Game created successfully.');
         snackbar.value = true;
         dialog.value = false;
+        emit('game-created')
     } catch (error) {
         // Handle errors
         console.error('API Error:', error);
