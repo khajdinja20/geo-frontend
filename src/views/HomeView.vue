@@ -24,6 +24,18 @@
             <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
           </template>
         </v-list-item>
+        <v-list-item>
+          <h2>User Games</h2>
+          <v-list density="compact">
+            <v-list-item v-for="(game, index) in userGames" :key="index">
+              {{ game.name }} - {{ game.theme }}
+              <template v-slot:append>
+                <CreateRound :game-id="game.id"></CreateRound>
+                <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -41,16 +53,34 @@
 <script setup>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
+import { ref, onMounted } from 'vue'
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import LogoutButton from '@/components/LogoutButton.vue'
-import { ref } from 'vue'
-import Cookies from 'js-cookie';
 import LeafletMap from '@/components/LeafletMap.vue';
 import CreateGame from '@/components/CreateGame.vue'
+import CreateRound from '@/components/CreateRound.vue'
 
 const userMail = Cookies.get('user')
 const userName = userMail ? userMail.split('@')[0] : '';
 const drawer = ref(true)
 const rail = ref(true)
+
+const userGames = ref([]);
+
+const endpoint = 'games'
+
+onMounted(async () => {
+  try {
+    const apiUrl = `http://localhost:4000/api/geotrainer/${endpoint}/${userMail}`;
+    const response = await axios.get(apiUrl);
+    userGames.value = response.data;
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error fetching user games:', error);
+  }
+});
 
 </script>

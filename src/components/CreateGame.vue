@@ -43,11 +43,23 @@
             </v-card>
         </v-dialog>
     </v-row>
+    <v-snackbar v-model="snackbar">
+        {{ text }}
+
+        <template v-slot:actions>
+            <v-btn color="pink" variant="text" @click="snackbar = false">
+                Close
+            </v-btn>
+        </template>
+    </v-snackbar>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 const dialog = ref(false);
+
+const snackbar = ref(false);
+const text = ref("Game created, refresh page to see new game!");
 
 import { useField, useForm } from 'vee-validate';
 import axios from 'axios';
@@ -84,6 +96,7 @@ const submitCreateGame = handleSubmit(async (values) => {
 
         // Redirect to another page or perform other actions after successful create game
         console.log('Game created successfully.');
+        snackbar.value = true;
         dialog.value = false;
     } catch (error) {
         // Handle errors
