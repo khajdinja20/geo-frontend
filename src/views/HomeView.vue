@@ -24,17 +24,19 @@
             <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
           </template>
         </v-list-item>
-        <v-list-item>
-          <h2>User Games</h2>
-          <v-list density="compact">
-            <v-list-item v-for="(game, index) in userGames" :key="index">
-              {{ game.name }} - {{ game.theme }}
-              <template v-slot:append>
-                <CreateRound :game-id="game.id"></CreateRound>
-                <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
-              </template>
-            </v-list-item>
-          </v-list>
+        <v-list-item type="subheader"><template v-slot:title>
+            <h4 class="font-weight-bold">User games</h4>
+            <v-divider></v-divider>
+          </template></v-list-item>
+        <v-list-item v-for="(game, index) in userGames" :key="index">
+          <template v-slot:title>
+            {{ game.name }} - {{ game.theme }}
+          </template>
+          <template v-slot:append>
+            <CreateRound :game-id="game.id" :marker1Location="marker1Location" :marker2Location="marker2Location">
+            </CreateRound>
+            <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
+          </template>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -44,8 +46,18 @@
       </template></v-app-bar>
 
     <v-main fluid style="height: 100vh;">
-      <LeafletMap></LeafletMap>
-      <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+      <l-map ref="map" v-model:zoom="zoom" :center="[46.307636, 16.338257]" @click="addMarker">
+        <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
+          name="OpenStreetMap"></l-tile-layer>
+        <l-marker :visible="true" :draggable="true" v-model:lat-lng="marker1Location"
+          @dragend="onMarkerDragEnd(marker1Location)">
+          <l-tooltip content="Your guess marker" />
+        </l-marker>
+        <l-marker :visible="true" :draggable="true" v-model:lat-lng="marker2Location"
+          @dragend="onMarkerDragEnd(marker2Location)">
+          <l-tooltip content="Correct guess marker" />
+        </l-marker>
+      </l-map>
     </v-main>
   </v-layout>
 </template>
@@ -59,7 +71,6 @@ import axios from 'axios';
 
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import LogoutButton from '@/components/LogoutButton.vue'
-import LeafletMap from '@/components/LeafletMap.vue';
 import CreateGame from '@/components/CreateGame.vue'
 import CreateRound from '@/components/CreateRound.vue'
 
@@ -82,5 +93,21 @@ onMounted(async () => {
     console.error('Error fetching user games:', error);
   }
 });
+
+// ------------------------ Leaflet map ------------------------
+import "leaflet/dist/leaflet.css";
+//import { latLng } from 'leaflet'
+import { LMap, LTileLayer, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
+
+
+const marker1Location = ref({ lat: 46.307636, lng: 16.338257 })
+const marker2Location = ref({ lat: 46.309178, lng: 16.342677 })
+
+
+const onMarkerDragEnd = (marker) => {
+  console.log('Lat: ' + marker.lat + " Lng: " + marker.lng);
+};
+
+const zoom = ref(14);
 
 </script>
