@@ -30,6 +30,7 @@
           </template></v-list-item>
         <v-list-item v-for="(game, index) in userGames" :key="index">
           <template v-slot:title>
+            <v-icon v-if="index === worstGameIndex" class="worst-game-icon" color="red">mdi-alert</v-icon>
             {{ game.name }} - {{ game.theme }}
           </template>
           <template v-slot:append>
@@ -80,6 +81,10 @@
               <template v-slot:subtitle>
                 Score: {{ round.score }} | Style: {{ round.style }}
               </template>
+              <template v-slot:append>
+                <v-btn type="icon" variant="outlined" color="primary" icon="mdi-map"
+                  @click="moveMarkersToRound(round)"></v-btn>
+              </template>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -106,6 +111,7 @@ const userName = userMail ? userMail.split('@')[0] : '';
 const drawer = ref(true)
 const rail = ref(true)
 
+// ---------------- Games list ----------------
 const userGames = ref([]);
 
 const endpoint = 'games'
@@ -121,9 +127,22 @@ onMounted(async () => {
   }
 });
 
+const worstGameIndex = computed(() => {
+  if (userGames.value.length === 0) {
+    return -1;
+  }
+
+  // Find the index of the game with the largest distance in worstRoundInfo
+  return userGames.value.reduce((maxIndex, game, currentIndex) => {
+    const distance = game.worstRoundInfo ? game.worstRoundInfo.distance : 0;
+    const maxDistance = userGames.value[maxIndex]?.worstRoundInfo?.distance || 0;
+    return distance > maxDistance ? currentIndex : maxIndex;
+  }, 0);
+});
+
 // ------------------------ Leaflet map ------------------------
 import "leaflet/dist/leaflet.css";
-//import { latLng } from 'leaflet'
+//import { L } from 'leaflet'
 import { LMap, LTileLayer, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
 
 
@@ -177,6 +196,13 @@ const openRoundsDialog = () => {
 };
 
 const closeRoundsDialog = () => {
+  roundsDialog.value = false;
+};
+
+const moveMarkersToRound = (round) => {
+  // Update marker1Location and marker2Location with the coordinates from the selected round
+  marker1Location.value = { lat: round.guessPoint.coordinates[0], lng: round.guessPoint.coordinates[1] };
+  marker2Location.value = { lat: round.correctLocationPoint.coordinates[0], lng: round.correctLocationPoint.coordinates[1] };
   roundsDialog.value = false;
 };
 
