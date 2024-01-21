@@ -75,6 +75,7 @@
             <v-list-item v-for="(round, roundIndex) in currentRounds" :key="roundIndex">
               <template v-slot:title>
                 {{ `Round ${roundIndex + 1}` }}
+                <v-icon v-if="roundIndex === worstRoundIndex" class="worst-round-icon" color="red">mdi-alert</v-icon>
               </template>
               <template v-slot:subtitle>
                 Score: {{ round.score }} | Style: {{ round.style }}
@@ -90,7 +91,7 @@
 <script setup>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
@@ -141,6 +142,17 @@ const gameRounds = ref([]);
 
 const roundsDialog = ref(false);
 const currentRounds = ref([]);
+
+const worstRoundIndex = computed(() => {
+  if (currentRounds.value.length === 0) {
+    return -1;
+  }
+
+  // Find the index of the round with the lowest score
+  return currentRounds.value.reduce((minIndex, round, currentIndex) => {
+    return round.score < currentRounds.value[minIndex].score ? currentIndex : minIndex;
+  }, 0);
+});
 
 const toggleRounds = async (index) => {
   if (!gameRounds[index]) {
