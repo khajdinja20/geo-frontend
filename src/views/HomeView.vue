@@ -33,9 +33,11 @@
             {{ game.name }} - {{ game.theme }}
           </template>
           <template v-slot:append>
+            <v-btn variant="text" icon="mdi-map-marker-multiple" color="primary" size="small"
+              @click="toggleRounds(index)">
+            </v-btn>
             <CreateRound :game-id="game.id" :marker1Location="marker1Location" :marker2Location="marker2Location">
             </CreateRound>
-            <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
           </template>
         </v-list-item>
       </v-list>
@@ -59,6 +61,29 @@
         </l-marker>
       </l-map>
     </v-main>
+    <v-dialog v-model="roundsDialog" persistent width="600">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Game Rounds</span>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="closeRoundsDialog">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-list>
+            <v-list-item v-for="(round, roundIndex) in currentRounds" :key="roundIndex">
+              <template v-slot:title>
+                {{ `Round ${roundIndex + 1}` }}
+              </template>
+              <template v-slot:subtitle>
+                Score: {{ round.score }} | Style: {{ round.style }}
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -73,6 +98,7 @@ import ThemeToggle from '@/components/ThemeToggle.vue';
 import LogoutButton from '@/components/LogoutButton.vue'
 import CreateGame from '@/components/CreateGame.vue'
 import CreateRound from '@/components/CreateRound.vue'
+//import RoundList from '@/components/RoundList.vue';
 
 const userMail = Cookies.get('user')
 const userName = userMail ? userMail.split('@')[0] : '';
@@ -109,5 +135,38 @@ const onMarkerDragEnd = (marker) => {
 };
 
 const zoom = ref(14);
+
+//-------------- Rounds list --------------------
+const gameRounds = ref([]);
+
+const roundsDialog = ref(false);
+const currentRounds = ref([]);
+
+const toggleRounds = async (index) => {
+  if (!gameRounds[index]) {
+    try {
+      const apiUrl = `http://localhost:4000/api/geotrainer/rounds/${userGames.value[index].id}`;
+      const response = await axios.get(apiUrl);
+      gameRounds[index] = response.data;
+      currentRounds.value = gameRounds[index];
+      console.log(gameRounds[index]);
+      openRoundsDialog();
+    } catch (error) {
+      console.error('Error fetching rounds:', error);
+    }
+  } else {
+    currentRounds.value = gameRounds[index];
+    openRoundsDialog();
+  }
+};
+
+const openRoundsDialog = () => {
+  roundsDialog.value = true;
+};
+
+const closeRoundsDialog = () => {
+  roundsDialog.value = false;
+};
+
 
 </script>
