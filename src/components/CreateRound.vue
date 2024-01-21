@@ -57,6 +57,7 @@ const dialog = ref(false);
 import { useField, useForm } from 'vee-validate';
 import axios from 'axios';
 
+
 const { handleSubmit } = useForm();
 
 const props = defineProps({
@@ -75,7 +76,7 @@ const props = defineProps({
 })
 
 const snackbar = ref(false);
-const text = ref("Round created, refresh page to see new round!");
+const text = ref("Round created!");
 
 var markerOneData = ref({
     type: "Point",
