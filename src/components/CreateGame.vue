@@ -105,7 +105,7 @@ const submitCreateGame = handleSubmit(async (values) => {
         // Handle errors
         console.error('API Error:', error);
 
-        // You can display an error message to the user or perform other error handling
+        // Display an error message to the user or perform other error handling
         console.log('Create game failed. Please check your input and try again.');
     }
 });

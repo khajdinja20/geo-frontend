@@ -46,8 +46,8 @@ export default {
         // Handle errors
         console.error("API Error:", error);
 
-        // You can display an error message to the user or perform other error handling
-        this.errorMessage = "Login/Register failed. Please check your credentials and try again.";
+        // Display an error message to the user or perform other error handling
+        console.log("Login/Register failed. Please check your credentials and try again.");
       }
     }
   }

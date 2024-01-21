@@ -42,7 +42,6 @@ export default {
     formData() {
         return {
             apiData: {
-                // Your custom API request data here
                 key: "value"
             }
         };

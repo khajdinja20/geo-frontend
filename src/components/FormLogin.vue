@@ -67,16 +67,11 @@ const submitLogin = handleSubmit(async values => {
         if (user.email != undefined)
             Cookies.set('user', user.email, { expires: 1 })
         router.push('/home')
-        // For example, you can store the user data in the frontend state
-        // this.$store.commit("setUser", user);
-
-        // Redirect to another page or perform other actions after successful login
-        // this.$router.push("/dashboard");
     } catch (error) {
         // Handle errors
         console.error("API Error:", error);
 
-        // You can display an error message to the user or perform other error handling
+        // Display an error message to the user or perform other error handling
         console.log("Login/Register failed. Please check your credentials and try again.");
     }
 })

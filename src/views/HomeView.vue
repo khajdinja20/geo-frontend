@@ -21,7 +21,6 @@
         <v-list-item prepend-icon="mdi-controller-classic" title="Games" value="home">
           <template v-slot:append>
             <CreateGame @game-created="refreshGameList"></CreateGame>
-            <!-- <v-btn variant="text" icon="mdi-plus" @click.stop="addGame"></v-btn> -->
           </template>
         </v-list-item>
         <v-list-item type="subheader"><template v-slot:title>
@@ -104,7 +103,6 @@ import ThemeToggle from '@/components/ThemeToggle.vue';
 import LogoutButton from '@/components/LogoutButton.vue'
 import CreateGame from '@/components/CreateGame.vue'
 import CreateRound from '@/components/CreateRound.vue'
-//import RoundList from '@/components/RoundList.vue';
 
 const userMail = Cookies.get('user')
 const userName = userMail ? userMail.split('@')[0] : '';
